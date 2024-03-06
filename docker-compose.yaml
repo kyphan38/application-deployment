@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  jenkins:
+    container_name: jenkins
+    build:
+      context: ./Dockerfile/jenkins
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"   # UI
+      - "50000:50000" # Agent
+    volumes:
+      - ./data/jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge
