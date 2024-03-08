@@ -6,6 +6,14 @@ pipeline {
     jdk 'java17'
     maven 'maven3'
   }
+  environment {
+    APP_NAME = "application-deployment"
+    VERSION = "1.0.0"
+    DOCKER_USERNAME = "kyphan3802"
+    DOCKER_PASSWORD = "dockerhub-credentials"   // Credentials ID
+    IMAGE_NAME = "${DOCKER_USERNAME}/${APP_NAME}"
+    IMAGE_TAG = "${VERSION}-${BUILD_NUMBER}"
+  }
   stages {
     stage("Clean Workspace") {
       steps {
@@ -45,6 +53,21 @@ pipeline {
       steps {
         script {
           waitForQualityGate abortPipeline: false, credentialsId: "sonarqube-credentials"
+        }
+      }
+    }
+
+    stage("Build and Push Docker Image") {
+      steps {
+        script {
+          docker.withRegistry("", DOCKER_PASSWORD) {
+            docker_image = docker.build "${IMAGE_NAME}"
+          }
+
+          docker.withRegistry("", DOCKER_PASSWORD) {
+            docker_image.push("${IMAGE_TAG}")
+            docker_image.push("latest")
+          }
         }
       }
     }

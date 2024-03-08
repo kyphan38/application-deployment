@@ -32,30 +32,21 @@ Sonarquebe
     - Generate API Token on Sonarqube
     - Configure API for Jenkins (using secret text) - jenkins-credentials
     - Install plugin: sonarqube scanner
+    - Install Sonarque scanner using plugins
+      -  sonarquebe5 Sonarquebe scanner 5.0.0.2966
     - Configure plugin:
       - Tick on: Environment variables
       - Name: sonarqube-scanner
-
-      - Server URL: http://localhost:9000
-      - Server authentication token: jenkins-credentials
-
       - Server URL: http://sonarqube:9000 # OK call api
       - Server authentication token: jenkins-credentials
-
-    - Install Sonarque scanner using plugins
-      -  sonarquebe5 Sonarquebe scanner 5.0.0.2966
-
   - Setup webhook for jenkins (quality gate)
     - Name: jenkins-webhook
     - URl: http://jenkins:8080/sonarqube-webhook
     - secret: leave a blank
 
-    - Jenkins URL: http://jenkins:8080/ (for sonarqube to call directly to container port)
-
-
-
-
-
+Docker
+  - Install plugin: Docker, Dockermomons pipeline docker api docker buidl setp, CloudBees Docker Build and Publish
+  - Add crentials of docker hub to jenkins
 
 
 
