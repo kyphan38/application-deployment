@@ -7,25 +7,25 @@ pipeline {
     maven 'maven3'
   }
   stages {
-    stage("Cleanup workspace") {
+    stage("Clean Workspace") {
       steps {
         deleteDir()
       }
     }
 
-    stage("Checkout repository") {
+    stage("Clone Repository") {
       steps {
         git branch: 'develop', credentialsId: 'github-credentials', url: "https://github.com/kyphan38/application-deployment.git"
       }
     }
 
-    stage("Build Application") {
+    stage("Build App") {
       steps {
         sh "mvn clean package"
       }
     }
 
-    stage("Test Application") {
+    stage("Run Tests") {
       steps {
         sh "mvn test"
       }

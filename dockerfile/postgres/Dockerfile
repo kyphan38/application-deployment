@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.447-jdk17
+FROM postgres:16
 
 USER root
 
@@ -8,3 +8,5 @@ RUN apt-get update && \
     apt-get install -y sudo && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+COPY init.sql /docker-entrypoint-initdb.d/init.sql
