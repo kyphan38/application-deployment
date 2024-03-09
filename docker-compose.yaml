@@ -3,7 +3,7 @@ services:
   jenkins:
     container_name: jenkins
     build:
-      context: ./dockerfile/jenkins
+      context: ./config/jenkins
       dockerfile: Dockerfile
     ports:
       - "9090:8080"   # UI
@@ -17,7 +17,7 @@ services:
   sonarqube:
     container_name: sonarqube
     build:
-      context: ./dockerfile/sonarqube
+      context: ./config/sonarqube
       dockerfile: Dockerfile
     ports:
       - "9000:9000"
@@ -38,17 +38,47 @@ services:
     restart: always
     container_name: postgres
     build:
-      context: ./dockerfile/postgres
+      context: ./config/postgres
       dockerfile: Dockerfile
     ports:
       - "5432:5432"
     volumes:
       - ./data/postgres/postgresql:/var/lib/postgresql
       - ./data/postgres/postgresql_data:/var/lib/postgresql/data
+      - .config/postgres/init.sql /docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar
       POSTGRES_DB: sonar
+    networks:
+      - net
+
+  prometheus:
+    restart: always
+    container_name: prometheus
+    build:
+      context: ./config/prometheus
+      dockerfile: Dockerfile
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./data/prometheus:/opt/bitnami/prometheus/conf
+      - ./config/prometheus/prometheus.yaml:/opt/bitnami/prometheus/conf/prometheus.yml
+    networks:
+      - net
+
+  grafana:
+    restart: always
+    container_name: grafana
+    build:
+      context: ./config/grafana
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
     networks:
       - net
 

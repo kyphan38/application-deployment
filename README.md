@@ -47,10 +47,11 @@ Sonarquebe
 Docker
   - Install plugin: Docker, Dockermomons pipeline docker api docker buidl setp, CloudBees Docker Build and Publish
   - Add crentials of docker hub to jenkins
+    - username: Username of DockerHub
+    - ID ...
 
-
-
-
+Trivy:
+  - Install trivy
 
 
 
