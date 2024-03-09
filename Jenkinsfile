@@ -3,8 +3,8 @@ pipeline {
     label "jenkins-agent"
   }
   tools{
-    jdk 'java17'
-    maven 'maven3'
+    jdk "java17"
+    maven "maven3"
   }
   environment {
     APP_NAME = "application-deployment"
@@ -68,6 +68,24 @@ pipeline {
             docker_image.push("${IMAGE_TAG}")
             docker_image.push("latest")
           }
+        }
+      }
+    }
+
+    stage("Scan Image with Trivy") {
+      steps {
+        script {
+		      sh ("docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image dmancloud/complete-prodcution-e2e-pipeline:1.0.0-22 --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table")
+        }
+      }
+
+    }
+
+    stage ("Cleanup Artifacts") {
+      steps {
+        script {
+          sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+          sh "docker rmi ${IMAGE_NAME}:latest"
         }
       }
     }
