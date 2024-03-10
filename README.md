@@ -1,92 +1,59 @@
-# Configuration GUIDE
+# Introduction
+Welcome to my project, where we focus on building a CI/CD pipeline for a web application. This pipeline is designed to automate the process of integrating code changes, testing those changes, and deploying them to production efficiently and securely.
 
-Jenkins
-  - Access Jenkins via localhost 9090
-  - Change password by default
-  - Setup agent as host system
-    - Check sshd service using sudo systemctl status sshd
-    - Add credentials (using the correct username of host) check whoami
-    - Setup agent (using the correct host) check hostname -i
+I leverage several tools, including GitHub, Jenkins, Maven, SonarQube, Docker, Trivy, Prometheus, and Grafana. These tools are utilized within a local containerization environment.
 
-  - Install default plugins
-    - Maven Integration, Pipeline Maven, Integration, Eclipse Temurin installer
-    - Setup maven version of plugin is 3.9
-    - Setup java version of plugin is 17
-  - Setup credentials
-    - Add PAT for GitHub
-  - Setup a pipeline from SCM
+# Configuration
+## Application builing
+  - To build and start all applications defined in your docker-compose.yaml file, use the following command:
+    ```shell
+    docker-compose up -d --build
+    ```
 
-  - Setup webhook using ngrok
-    - Install ngrok
-    - ngrok http http://localhost:9090
-    - Payload URL of webhooks should be "https://b105-171-243-48-114.ngrok-free.app/github-webhook/"
-
-HOST jenkins as internet : using ngrok => " ..abc"
-
-Sonarquebe
-  - Install sonarquebe:
-    - sudo sysctl -w vm.max_map_count=262144
-    - Change permission for sonarqube folder 777
-
-  - Configure Jenkins for Sonarqube
-    - Generate API Token on Sonarqube
-    - Configure API for Jenkins (using secret text) - jenkins-credentials
-    - Install plugin: sonarqube scanner
-    - Install Sonarque scanner using plugins
-      -  sonarquebe5 Sonarquebe scanner 5.0.0.2966
-    - Configure plugin:
-      - Tick on: Environment variables
-      - Name: sonarqube-scanner
-      - Server URL: http://sonarqube:9000 # OK call api
-      - Server authentication token: jenkins-credentials
-  - Setup webhook for jenkins (quality gate)
-    - Name: jenkins-webhook
-    - URl: http://jenkins:8080/sonarqube-webhook
-    - secret: leave a blank
-
-Docker
-  - Install plugin: Docker, Dockermomons pipeline docker api docker buidl setp, CloudBees Docker Build and Publish
-  - Add crentials of docker hub to jenkins
-    - username: Username of DockerHub
-    - ID ...
-
-Trivy:
-  - Install trivy
-
-
-
-# Configuration Guide
-
-This guide provides step-by-step instructions for configuring Jenkins and SonarQube.
-
-## Jenkins Configuration
-
-### Accessing Jenkins
-
-- Access Jenkins via: `http://localhost:9090`
-
-### Initial Setup
-
-- **Change the default password** immediately after the first login.
-- **Set up an agent on the host system**:
-  1. Verify the SSHD service is running:
-     ```shell
-     sudo systemctl status sshd
+## Jenkins
+  - Access Jenkins via `localhost:9090` and change the default password.
+  - Set up an agent as the host system using the method: Launch agent by connecting it to the controller.
+  - Install and configure several plugins:
+    - Maven Integration, Pipeline Maven Integration, Eclipse Temurin installer.
+    - Set the Maven version in the plugin to 3.9.
+    - Set the Java version in the plugin to 17.
+  - Set up credentials for GitHub.
+  - Set up a pipeline from SCM (Source Code Management).
+  - Set up a webhook to trigger automatically using ngrok:
+    ```shell
+    ngrok http http://localhost:9090
      ```
-  2. Add credentials:
-     - Use the correct username of the host (check using `whoami`).
-  3. Set up the agent:
-     - Use the correct host (check using `hostname -i`).
+    - Then, insert the ngrok URL into the payload URL section of the webhook settings.
 
-### Installing Plugins
+## Sonarquebe
+  - Change the following configuration on the host system:
+    ``` shell
+    sudo sysctl -w vm.max_map_count=262144
+    chmod -R 777 ./data/sonarqube
+    ```
+  - Configure Jenkins for SonarQube:
+    - Configure the API Token of SonarQube in Jenkins (using secret text) under `jenkins-credentials`.
+    - Install and configure the SonarQube Scanner plugin on Jenkins.
+    - Configure the plugin:
+      - Check "Environment variables."
+      - Name: sonarqube-scanner
+      - Server URL: `http://sonarqube:9000`
+      - Server authentication token: `jenkins-credentials`
+  - Set up a webhook for Jenkins (for the quality gate):
+    - Name: `jenkins-webhook`
+    - URl: `http://jenkins:8080/sonarqube-webhook`
+    - Secret: leave blank
 
-Install the following default plugins:
+## Docker
+  - Install the following plugins in Jenkins: Docker, Docker Commons, Docker Pipeline, Docker API, docker-build-step, CloudBees Docker Build and Publish.
+  - Add Docker Hub credentials to Jenkins.
 
-- Maven Integration
-- Pipeline Maven Integration
-- Eclipse Temurin installer
+## Trivy:
+  - Install Trivy on host system.
 
-Configuration:
+## Prometheus:
+  - Install the following plugins in Jenkins: Prometheus Metrics, Otel Agent Host Metrics Monitoring, and Cortex Metrics.
+  - Configuration file located at `./config/prometheus/prometheus.yaml`.
 
-- Set Maven version in the plugin to `3.9`.
-- Set Java version in the plugin to `17`.
+## Grafana
+  - Set up Grafana through the UI to integrate with Prometheus.
